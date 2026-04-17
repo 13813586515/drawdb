@@ -15,6 +15,7 @@ import {
   useTransform,
   useTypes,
   useUndoRedo,
+  useCodeGenerator,
 } from "../../../hooks";
 import { isRtl } from "../../../i18n/utils/rtl";
 import { importSQL } from "../../../utils/importSQL";
@@ -32,6 +33,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
+import CodeGenerator from "./CodeGenerator";
 import { useNavigate } from "react-router-dom";
 import { mergeCustomTypes } from "../../../utils/customTypes";
 
@@ -79,6 +81,7 @@ export default function Modal({
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const navigate = useNavigate();
+  const { getSelectedTables, getAllTables, closeCodeGenerator } = useCodeGenerator();
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -321,6 +324,14 @@ export default function Modal({
         );
       case MODAL.SHARE:
         return <Share title={title} setModal={setModal} />;
+      case MODAL.CODE_GENERATOR:
+        return (
+          <CodeGenerator
+            selectedTables={getSelectedTables()}
+            allTables={getAllTables()}
+            onClose={closeCodeGenerator}
+          />
+        );
       default:
         return <></>;
     }
@@ -366,15 +377,15 @@ export default function Modal({
           ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
-        hidden: modal === MODAL.SHARE,
+        hidden: modal === MODAL.SHARE || modal === MODAL.CODE_GENERATOR,
       }}
       hasCancel={modal !== MODAL.SHARE}
       cancelText={t("cancel")}
       width={getModalWidth(modal)}
       bodyStyle={{
-        maxHeight: window.innerHeight - 280,
+        maxHeight: window.innerHeight - 200,
         overflow:
-          modal === MODAL.CODE || modal === MODAL.IMG ? "hidden" : "auto",
+          modal === MODAL.CODE || modal === MODAL.IMG || modal === MODAL.CODE_GENERATOR ? "hidden" : "auto",
         direction: "ltr",
       }}
     >

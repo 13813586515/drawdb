@@ -8,6 +8,7 @@ import NotesContextProvider from "../context/NotesContext";
 import TypesContextProvider from "../context/TypesContext";
 import SaveStateContextProvider from "../context/SaveStateContext";
 import EnumsContextProvider from "../context/EnumsContext";
+import { CodeGeneratorContextProvider } from "../context/CodeGeneratorContext";
 import WorkSpace from "../components/Workspace";
 import { useThemedPage } from "../hooks";
 
@@ -25,7 +26,9 @@ export default function Editor() {
                   <EnumsContextProvider>
                     <TablesContextProvider>
                       <SaveStateContextProvider>
-                        <WorkSpace />
+                        <CodeGeneratorContextProvider>
+                          <WorkSpace />
+                        </CodeGeneratorContextProvider>
                       </SaveStateContextProvider>
                     </TablesContextProvider>
                   </EnumsContextProvider>

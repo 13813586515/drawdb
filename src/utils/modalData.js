@@ -25,6 +25,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("language");
     case MODAL.SHARE:
       return i18n.t("share");
+    case MODAL.CODE_GENERATOR:
+      return "代码生成器";
     default:
       return "";
   }
@@ -32,6 +34,8 @@ export const getModalTitle = (modal) => {
 
 export const getModalWidth = (modal) => {
   switch (modal) {
+    case MODAL.CODE_GENERATOR:
+      return 1000;
     case MODAL.LANGUAGE:
     case MODAL.OPEN:
     case MODAL.CODE:

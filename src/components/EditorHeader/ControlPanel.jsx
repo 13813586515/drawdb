@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -63,6 +63,7 @@ import {
   useAreas,
   useEnums,
   useFullscreen,
+  useCodeGenerator,
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -129,6 +130,21 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { version, gistId, setGistId } = useContext(IdContext);
   const isTemplate = useMatch("/editor/templates/:id");
   const navigate = useNavigate();
+  const { isOpen, closeCodeGenerator } = useCodeGenerator();
+
+  useEffect(() => {
+    if (isOpen && modal !== MODAL.CODE_GENERATOR) {
+      setModal(MODAL.CODE_GENERATOR);
+    } else if (!isOpen && modal === MODAL.CODE_GENERATOR) {
+      setModal(MODAL.NONE);
+    }
+  }, [isOpen, modal]);
+
+  useEffect(() => {
+    if (modal !== MODAL.CODE_GENERATOR && isOpen) {
+      closeCodeGenerator();
+    }
+  }, [modal, isOpen, closeCodeGenerator]);
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));

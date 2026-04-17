@@ -16,7 +16,7 @@ import {
   IconUnlock,
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
-import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
+import { useLayout, useSettings, useDiagram, useSelect, useCodeGenerator } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 import { resolveType } from "../../utils/customTypes";
@@ -43,6 +43,7 @@ export default function Table({
     bulkSelectedElements,
     setBulkSelectedElements,
   } = useSelect();
+  const { openCodeGenerator } = useCodeGenerator();
 
   const borderColor = useMemo(
     () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
@@ -242,6 +243,15 @@ export default function Table({
                             </div>
                           )}
                         </div>
+                        <Button
+                          icon={<i className="bi bi-code-slash"></i>}
+                          type="primary"
+                          block
+                          style={{ marginTop: "8px" }}
+                          onClick={() => openCodeGenerator(tableData)}
+                        >
+                          代码生成
+                        </Button>
                         <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
