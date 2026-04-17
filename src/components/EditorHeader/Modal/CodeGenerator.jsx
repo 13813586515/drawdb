@@ -18,11 +18,11 @@ import {
   getLayerDirectory,
   CODE_LANGUAGE,
   CODE_LAYER,
-} from "../../utils/codeGenerator";
+} from "../../../utils/codeGenerator";
 import CodeEditor from "../CodeEditor";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { toPascalCase } from "../../utils/codeGenerator/shared";
+import { toPascalCase } from "../../../utils/codeGenerator/shared";
 
 const layerLabels = {
   [CODE_LAYER.ENTITY]: "Entity",
