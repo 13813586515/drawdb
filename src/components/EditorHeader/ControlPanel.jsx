@@ -1759,6 +1759,16 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
+          <Tooltip content="原型验证" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              onClick={() => setModal(MODAL.PROTOTYPE)}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-rocket text-lg" />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("versions")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"

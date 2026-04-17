@@ -27,6 +27,7 @@ const zh = {
     export_as: "导出为",
     export_source: "导出为 SQL 源代码",
     models: "模型",
+    prototype_verification: "原型验证",
     exit: "退出",
     edit: "编辑",
     undo: "撤销",
