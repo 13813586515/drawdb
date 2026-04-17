@@ -32,6 +32,7 @@ const en = {
     export_as: "Export as",
     export_source: "Export SQL",
     models: "Models",
+    prototype_verification: "Prototype Verification",
     exit: "Exit",
     edit: "Edit",
     undo: "Undo",
