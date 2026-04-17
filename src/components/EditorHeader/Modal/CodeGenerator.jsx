@@ -160,7 +160,6 @@ export default function CodeGenerator({
           onClick={handleExport}
           disabled={bulkSelectedTables.length === 0}
         >
-          <i className="bi bi-download me-1" />
           导出代码
         </Button>
       </div>

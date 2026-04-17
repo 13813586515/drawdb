@@ -244,7 +244,7 @@ export default function Table({
                           )}
                         </div>
                         <Button
-                          icon={<i className="bi bi-code-slash"></i>}
+                          icon={<IconEdit />}
                           type="primary"
                           block
                           style={{ marginTop: "8px" }}
