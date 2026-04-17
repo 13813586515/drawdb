@@ -7,12 +7,13 @@ import {
   Spin,
   Toast,
   Button,
+  Select,
 } from "@douyinfe/semi-ui";
 import { useDiagram, usePrototype } from "../../../hooks";
 import { generatePrototype, downloadPrototype } from "../../../utils/prototypeGenerator";
 
 export default function PrototypeModal({ onClose }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { tables } = useDiagram();
   const {
     prototypeStatus,
@@ -25,6 +26,7 @@ export default function PrototypeModal({ onClose }) {
   } = usePrototype();
 
   const [prototypeName, setPrototypeName] = useState("my_prototype");
+  const [language, setLanguage] = useState(i18n.language === "zh" ? "zh" : "en");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const hasTables = tables && tables.length > 0;
@@ -47,6 +49,7 @@ export default function PrototypeModal({ onClose }) {
       const result = await generatePrototype({
         prototypeName: prototypeName.trim(),
         tables: tables,
+        language: language,
         onProgress: (progress, message) => {
           updateProgress(progress, message);
         },
@@ -120,6 +123,28 @@ export default function PrototypeModal({ onClose }) {
             />
             <p className="text-xs text-gray-500 mt-1">
               {t("prototype_name_hint")}
+            </p>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2">
+              {t("prototype_language_label")}
+            </label>
+            <Select
+              value={language}
+              onChange={(value) => setLanguage(value)}
+              disabled={isGenerating}
+              style={{ width: "100%" }}
+            >
+              <Select.Option value="zh">
+                中文
+              </Select.Option>
+              <Select.Option value="en">
+                English
+              </Select.Option>
+            </Select>
+            <p className="text-xs text-gray-500 mt-1">
+              {t("prototype_language_hint")}
             </p>
           </div>
 

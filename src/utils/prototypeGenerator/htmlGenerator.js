@@ -1,14 +1,17 @@
-export function generateHTML(table, allTables) {
+import { getTranslations } from "./translations";
+
+export function generateHTML(table, allTables, language = "zh") {
   const fields = table.fields || [];
   const primaryKeyField = fields.find((f) => f.primary) || fields[0];
   const port = 5000 + (allTables.findIndex((t) => t.id === table.id) + 1);
+  const t = getTranslations(language);
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${t.htmlLang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${table.name} - CRUD Prototype</title>
+    <title>${table.name}${t.titleSuffix}</title>
     <style>
         * {
             margin: 0;
@@ -230,12 +233,12 @@ export function generateHTML(table, allTables) {
 </head>
 <body>
     <div class="container">
-        <h1>${table.name} - CRUD Prototype</h1>
+        <h1>${table.name}${t.titleSuffix}</h1>
         
         <div id="message" class="message"></div>
         
         <div class="card">
-            <div class="card-title">Add New Record</div>
+            <div class="card-title">${t.addRecord}</div>
             <form id="addForm">
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
 ${fields.map((field) => `
@@ -250,28 +253,28 @@ ${fields.map((field) => `
                             name="${field.name}" 
                             ${field.primary ? 'id="primaryKeyField"' : ''}
                             ${field.notNull && !field.primary ? 'required' : ''}
-                            ${field.increment ? 'placeholder="Auto-increment"' : ''}
+                            ${field.increment ? `placeholder="${language === 'zh' ? '自动递增' : 'Auto-increment'}"` : ''}
                         />
                     </div>
 `).join('')}
                 </div>
                 <button type="submit" class="btn btn-primary">
-                    <span id="addBtnText">Add Record</span>
-                    <span id="addBtnLoading" class="hidden">Adding...</span>
+                    <span id="addBtnText">${t.addRecordBtn}</span>
+                    <span id="addBtnLoading" class="hidden">${t.adding}</span>
                 </button>
-                <button type="button" class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEdit()">Cancel Edit</button>
+                <button type="button" class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEdit()">${t.cancelEdit}</button>
             </form>
         </div>
         
         <div class="card">
             <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Records (${fields.length} fields)</span>
-                <button class="btn btn-secondary" onclick="refreshData()">Refresh</button>
+                <span>${t.records} (${fields.length} ${t.fields})</span>
+                <button class="btn btn-secondary" onclick="refreshData()">${t.refresh}</button>
             </div>
             <div id="dataTable">
                 <div class="empty-state">
                     <i>📋</i>
-                    <p>Loading data...</p>
+                    <p>${t.loadingData}</p>
                 </div>
             </div>
         </div>
@@ -280,7 +283,7 @@ ${fields.map((field) => `
     <div id="editModal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
-                <h3>Edit Record</h3>
+                <h3>${t.editRecord}</h3>
                 <button class="modal-close" onclick="closeEditModal()">&times;</button>
             </div>
             <form id="editForm">
@@ -289,7 +292,7 @@ ${fields.map((field) => `
                     <label>
                         ${field.name}
                         ${field.notNull || field.primary ? '<span class="required">*</span>' : ''}
-                        ${field.primary ? '<small>(PK - Read-only)</small>' : ''}
+                        ${field.primary ? `<small>(${language === 'zh' ? 'PK - 只读' : 'PK - Read-only'})</small>` : ''}
                     </label>
                     <input 
                         type="${getInputType(field)}" 
@@ -300,8 +303,8 @@ ${fields.map((field) => `
                 </div>
 `).join('')}
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">${t.cancel}</button>
+                    <button type="submit" class="btn btn-primary">${t.saveChanges}</button>
                 </div>
             </form>
         </div>
@@ -310,13 +313,13 @@ ${fields.map((field) => `
     <div id="deleteModal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
-                <h3>Confirm Delete</h3>
+                <h3>${t.confirmDelete}</h3>
                 <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
             </div>
-            <p>Are you sure you want to delete this record? This action cannot be undone.</p>
+            <p>${t.confirmDeleteMsg}</p>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">${t.cancel}</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">${t.delete}</button>
             </div>
         </div>
     </div>
@@ -346,7 +349,7 @@ ${fields.map((field) => `
                 return data;
             } catch (error) {
                 console.error('Error fetching data:', error);
-                showMessage('Failed to connect to server. Make sure the Python server is running.', 'error');
+                showMessage('${t.failedToConnect}', 'error');
                 return null;
             }
         }
@@ -363,7 +366,7 @@ ${fields.map((field) => `
                 tableEl.innerHTML = \`
                     <div class="empty-state">
                         <i>📭</i>
-                        <p>No records yet. Add your first record above.</p>
+                        <p>${t.noRecords}</p>
                     </div>
                 \`;
                 return;
@@ -378,7 +381,7 @@ ${fields.map((f) => `'${f.name}'`).join(',\n')}
                     <thead>
                         <tr>
 \${fields.map(f => \`<th>\${f}</th>\`).join('')}
-                            <th style="width: 150px;">Actions</th>
+                            <th style="width: 150px;">${t.actions}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -394,8 +397,8 @@ ${fields.map((f) => `'${f.name}'`).join(',\n')}
                 html += \`
                     <td>
                         <div class="action-btns">
-                            <button class="btn btn-warning" onclick="openEditModal(\${typeof pkValue === 'string' ? \`'\${pkValue}'\` : pkValue})">Edit</button>
-                            <button class="btn btn-danger" onclick="openDeleteModal(\${typeof pkValue === 'string' ? \`'\${pkValue}'\` : pkValue})">Delete</button>
+                            <button class="btn btn-warning" onclick="openEditModal(\${typeof pkValue === 'string' ? \`'\${pkValue}'\` : pkValue})">${t.edit}</button>
+                            <button class="btn btn-danger" onclick="openDeleteModal(\${typeof pkValue === 'string' ? \`'\${pkValue}'\` : pkValue})">${t.delete}</button>
                         </div>
                     </td>
                 \`;
@@ -455,17 +458,17 @@ ${fields.map((f) => `'${f.name}'`).join(',\n')}
                 }
                 
                 if (response.ok) {
-                    showMessage(isEditMode ? 'Record updated successfully!' : 'Record added successfully!', 'success');
+                    showMessage(isEditMode ? '${t.recordUpdatedSuccess}' : '${t.recordAddedSuccess}', 'success');
                     this.reset();
                     cancelEdit();
                     refreshData();
                 } else {
                     const error = await response.json();
-                    showMessage(error.error || 'Operation failed', 'error');
+                    showMessage(error.error || '${t.operationFailed}', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('Failed to connect to server', 'error');
+                showMessage('${t.failedToConnectServer}', 'error');
             } finally {
                 addBtn.disabled = false;
                 btnText.classList.remove('hidden');
@@ -543,16 +546,16 @@ ${fields.map((field) => `
                 });
                 
                 if (response.ok) {
-                    showMessage('Record deleted successfully!', 'success');
+                    showMessage('${t.recordDeletedSuccess}', 'success');
                     closeDeleteModal();
                     refreshData();
                 } else {
                     const error = await response.json();
-                    showMessage(error.error || 'Delete failed', 'error');
+                    showMessage(error.error || '${t.operationFailed}', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('Failed to connect to server', 'error');
+                showMessage('${t.failedToConnectServer}', 'error');
             }
         }
         
@@ -578,16 +581,16 @@ ${fields.map((field) => `
                 });
                 
                 if (response.ok) {
-                    showMessage('Record updated successfully!', 'success');
+                    showMessage('${t.recordUpdatedSuccess}', 'success');
                     closeEditModal();
                     refreshData();
                 } else {
                     const error = await response.json();
-                    showMessage(error.error || 'Update failed', 'error');
+                    showMessage(error.error || '${t.operationFailed}', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('Failed to connect to server', 'error');
+                showMessage('${t.failedToConnectServer}', 'error');
             }
         });
         

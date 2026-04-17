@@ -3,14 +3,17 @@ import { saveAs } from "file-saver";
 import { generateHTML } from "./htmlGenerator";
 import { generatePython } from "./pythonGenerator";
 import { generateJSON } from "./jsonGenerator";
+import { getReadmeTranslations } from "./translations";
 
 export async function generatePrototype({
   prototypeName,
   tables,
+  language = "zh",
   onProgress,
 }) {
   const zip = new JSZip();
   const prototypeFolder = zip.folder(prototypeName);
+  const t = getReadmeTranslations(language);
 
   const totalSteps = tables.length * 3;
   let currentStep = 0;
@@ -20,7 +23,7 @@ export async function generatePrototype({
 
     currentStep++;
     onProgress?.(Math.round((currentStep / totalSteps) * 100), `Generating HTML for ${table.name}...`);
-    const htmlContent = generateHTML(table, tables);
+    const htmlContent = generateHTML(table, tables, language);
     tableFolder.file(`${table.name}.html`, htmlContent);
 
     currentStep++;
@@ -34,7 +37,7 @@ export async function generatePrototype({
     tableFolder.file(`${table.name}.json`, jsonContent);
   }
 
-  const readmeContent = generateReadme(prototypeName, tables);
+  const readmeContent = generateReadme(prototypeName, tables, t);
   prototypeFolder.file("README.md", readmeContent);
 
   const requirementsContent = generateRequirements();
@@ -56,31 +59,31 @@ export function downloadPrototype(blob, filename) {
   saveAs(blob, filename);
 }
 
-function generateReadme(prototypeName, tables) {
-  return `# ${prototypeName} - Prototype
+function generateReadme(prototypeName, tables, t) {
+  return `# ${prototypeName}${t.title}
 
-## Overview
-This is an auto-generated prototype for your database design.
+## ${t.overview}
+${t.overviewDesc}
 
-## Tables Included
+## ${t.tablesIncluded}
 ${tables.map((t) => `- ${t.name} (${t.fields.length} fields)`).join("\n")}
 
-## Getting Started
+## ${t.gettingStarted}
 
-1. Install dependencies:
-   \`\`\`bash
-   pip install -r requirements.txt
-   \`\`\`
+${t.step1}
+\`\`\`bash
+pip install -r requirements.txt
+\`\`\`
 
-2. For each table, navigate to its folder and run:
-   \`\`\`bash
-   cd <table_name>
-   python <table_name>.py
-   \`\`\`
+${t.step2}
+\`\`\`bash
+cd <table_name>
+python <table_name>.py
+\`\`\`
 
-3. Open the HTML file in your browser to use the CRUD interface.
+${t.step3}
 
-## Structure
+## ${t.structure}
 \`\`\`
 ${prototypeName}/
 ├── README.md
@@ -91,9 +94,8 @@ ${tables.map((t) => `├── ${t.name}/
 │   └── ${t.name}.json`).join("\n")}
 \`\`\`
 
-## Note
-This is a prototype for verification purposes only. 
-Each table runs as an independent service on a different port.
+## ${t.note}
+${t.noteDesc}
 `;
 }
 
