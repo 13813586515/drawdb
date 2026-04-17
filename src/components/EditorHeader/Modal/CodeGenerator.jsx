@@ -19,7 +19,7 @@ import {
   CODE_LANGUAGE,
   CODE_LAYER,
 } from "../../../utils/codeGenerator";
-import CodeEditor from "../CodeEditor";
+import CodeEditor from "../../CodeEditor";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { toPascalCase } from "../../../utils/codeGenerator/shared";
