@@ -88,6 +88,22 @@ export const MODAL = {
   LANGUAGE: 10,
   SHARE: 11,
   CONFIG_CUSTOM_TYPES: 12,
+  CODE_GENERATOR: 13,
+};
+
+export const CODE_LANGUAGE = {
+  JAVA: "java",
+  PYTHON: "python",
+  GO: "go",
+  TYPESCRIPT: "typescript",
+};
+
+export const CODE_LAYER = {
+  CONTROLLER: "controller",
+  SERVICE: "service",
+  MAPPER: "mapper",
+  DAO: "dao",
+  ENTITY: "entity",
 };
 
 export const STATUS = {
