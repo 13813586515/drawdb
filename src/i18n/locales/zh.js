@@ -53,6 +53,8 @@ const zh = {
     prototype_minimize: "最小化到角落",
     prototype_generated_success: "原型 \"{{name}}\" 生成成功！正在下载...",
     prototype_generate_failed: "生成原型失败",
+    prototype_language_label: "导出语言",
+    prototype_language_hint: "选择生成的HTML和README文件的语言。",
     exit: "退出",
     edit: "编辑",
     undo: "撤销",

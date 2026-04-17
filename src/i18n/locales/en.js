@@ -58,6 +58,8 @@ const en = {
     prototype_minimize: "Minimize to corner",
     prototype_generated_success: "Prototype \"{{name}}\" generated successfully! Downloading...",
     prototype_generate_failed: "Failed to generate prototype",
+    prototype_language_label: "Export Language",
+    prototype_language_hint: "Choose the language for generated HTML and README files.",
     exit: "Exit",
     edit: "Edit",
     undo: "Undo",
