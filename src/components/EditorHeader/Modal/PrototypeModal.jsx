@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Input,
   Table,
@@ -11,6 +12,7 @@ import { useDiagram, usePrototype } from "../../../hooks";
 import { generatePrototype, downloadPrototype } from "../../../utils/prototypeGenerator";
 
 export default function PrototypeModal({ onClose }) {
+  const { t } = useTranslation();
   const { tables } = useDiagram();
   const {
     prototypeStatus,
@@ -29,12 +31,12 @@ export default function PrototypeModal({ onClose }) {
 
   const handleGenerate = async () => {
     if (!prototypeName.trim()) {
-      Toast.warning("Please enter a prototype name");
+      Toast.warning(t("prototype_enter_name"));
       return;
     }
 
     if (!hasTables) {
-      Toast.warning("No tables found in the diagram");
+      Toast.warning(t("prototype_no_tables"));
       return;
     }
 
@@ -54,7 +56,7 @@ export default function PrototypeModal({ onClose }) {
       
       downloadPrototype(result.blob, result.filename);
       
-      Toast.success(`Prototype "${prototypeName}" generated successfully! Downloading...`);
+      Toast.success(t("prototype_generated_success", { name: prototypeName }));
       
       setTimeout(() => {
         reset();
@@ -63,7 +65,7 @@ export default function PrototypeModal({ onClose }) {
     } catch (error) {
       console.error("Error generating prototype:", error);
       failGeneration(error.message);
-      Toast.error("Failed to generate prototype: " + error.message);
+      Toast.error(t("prototype_generate_failed") + ": " + error.message);
     } finally {
       setIsGenerating(false);
     }
@@ -71,21 +73,23 @@ export default function PrototypeModal({ onClose }) {
 
   const columns = [
     {
-      title: "Table Name",
+      title: t("prototype_table_name"),
       dataIndex: "name",
       key: "name",
       render: (text) => <strong>{text}</strong>,
     },
     {
-      title: "Fields",
+      title: t("prototype_fields"),
       dataIndex: "fields",
       key: "fields",
       render: (fields) => (
-        <Tag color="blue">{(fields || []).length} fields</Tag>
+        <Tag color="blue">
+          {t("prototype_fields_count", { count: (fields || []).length })}
+        </Tag>
       ),
     },
     {
-      title: "Primary Key",
+      title: t("prototype_primary_key"),
       dataIndex: "fields",
       key: "pk",
       render: (fields) => {
@@ -93,7 +97,7 @@ export default function PrototypeModal({ onClose }) {
         return pkField ? (
           <Tag color="green">{pkField.name}</Tag>
         ) : (
-          <Tag color="orange">No PK</Tag>
+          <Tag color="orange">{t("prototype_no_pk")}</Tag>
         );
       },
     },
@@ -105,23 +109,23 @@ export default function PrototypeModal({ onClose }) {
         <>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
-              Prototype Name <span className="text-red-500">*</span>
+              {t("prototype_name_label")} <span className="text-red-500">*</span>
             </label>
             <Input
-              placeholder="Enter prototype name"
+              placeholder={t("prototype_name_placeholder")}
               value={prototypeName}
               onChange={(value) => setPrototypeName(value)}
               showClear
               disabled={isGenerating}
             />
             <p className="text-xs text-gray-500 mt-1">
-              This will be used as the folder name for your prototype.
+              {t("prototype_name_hint")}
             </p>
           </div>
 
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
-              Tables to Generate ({tables.length})
+              {t("prototype_tables_label", { count: tables.length })}
             </label>
             {hasTables ? (
               <Table
@@ -133,7 +137,7 @@ export default function PrototypeModal({ onClose }) {
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <i className="fa-solid fa-table text-3xl mb-2 opacity-50" />
-                <p>No tables found. Please add tables to your diagram first.</p>
+                <p>{t("prototype_no_tables_hint")}</p>
               </div>
             )}
           </div>
@@ -142,14 +146,27 @@ export default function PrototypeModal({ onClose }) {
             <div className="flex items-start">
               <i className="fa-solid fa-circle-info text-blue-500 mt-1 mr-3" />
               <div>
-                <p className="text-sm font-semibold text-blue-800">What will be generated?</p>
+                <p className="text-sm font-semibold text-blue-800">
+                  {t("prototype_what_generated")}
+                </p>
                 <ul className="text-sm text-blue-700 mt-2 space-y-1">
-                  <li>• A ZIP file containing a folder for each table</li>
-                  <li>• Each folder contains: HTML, Python (Flask API), and JSON files</li>
-                  <li>• Double-click the HTML file to use the CRUD interface</li>
-                  <li>• Run the Python file to start the API server</li>
-                  <li>• Data is persisted in the JSON file</li>
+                  <li>• {t("prototype_gen_item1")}</li>
+                  <li>• {t("prototype_gen_item2")}</li>
+                  <li>• {t("prototype_gen_item3")}</li>
+                  <li>• {t("prototype_gen_item4")}</li>
+                  <li>• {t("prototype_gen_item5")}</li>
                 </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-3">
+            <div className="flex items-start">
+              <i className="fa-solid fa-triangle-exclamation text-yellow-500 mt-1 mr-3" />
+              <div>
+                <p className="text-sm text-yellow-800">
+                  {t("prototype_download_note")}
+                </p>
               </div>
             </div>
           </div>
@@ -159,7 +176,7 @@ export default function PrototypeModal({ onClose }) {
               theme="light"
               onClick={() => onClose?.()}
             >
-              取消
+              {t("cancel")}
             </Button>
             <Button
               type="primary"
@@ -167,16 +184,18 @@ export default function PrototypeModal({ onClose }) {
               disabled={!hasTables}
               icon={<i className="fa-solid fa-rocket" />}
             >
-              生成原型
+              {t("prototype_generate")}
             </Button>
           </div>
         </>
       ) : (
         <div className="text-center py-8">
           <Spin size="large" />
-          <p className="mt-4 text-lg font-medium">{prototypeStatus.message || "Generating prototype..."}</p>
+          <p className="mt-4 text-lg font-medium">
+            {prototypeStatus.message || t("prototype_generating")}
+          </p>
           <p className="text-sm text-gray-500 mt-2">
-            Progress: {prototypeStatus.progress}%
+            {t("prototype_progress")}: {prototypeStatus.progress}%
           </p>
           <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4">
             <div
@@ -192,7 +211,7 @@ export default function PrototypeModal({ onClose }) {
             }}
           >
             <i className="fa-solid fa-minus mr-1" />
-            Minimize to corner
+            {t("prototype_minimize")}
           </button>
         </div>
       )}

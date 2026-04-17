@@ -21,6 +21,7 @@ CORS(app)
 DATA_FILE = os.path.join(os.path.dirname(__file__), '${table.name}.json')
 TABLE_NAME = '${table.name}'
 PRIMARY_KEY = '${primaryKeyField ? primaryKeyField.name : fields[0]?.name || 'id'}'
+PORT = ${port}
 FIELDS = [
 ${fields.map((f) => `    '${f.name}',`).join('\n')}
 ]
@@ -70,7 +71,7 @@ ${fields.filter(f => f.notNull && !f.primary).map((f) => `    if not is_update a
 ${fields.map((f) => {
   const typeLower = (f.type || '').toLowerCase();
   if (typeLower.includes('int')) {
-    return `    if '${f.name}' in record and record['${f.name}'] not in (None, '', null):
+    return `    if '${f.name}' in record and record['${f.name}'] not in (None, ''):
         try:
             record['${f.name}'] = int(record['${f.name}'])
         except (ValueError, TypeError):
@@ -78,7 +79,7 @@ ${fields.map((f) => {
 `;
   }
   if (typeLower.includes('float') || typeLower.includes('double') || typeLower.includes('decimal') || typeLower.includes('numeric')) {
-    return `    if '${f.name}' in record and record['${f.name}'] not in (None, '', null):
+    return `    if '${f.name}' in record and record['${f.name}'] not in (None, ''):
         try:
             record['${f.name}'] = float(record['${f.name}'])
         except (ValueError, TypeError):
@@ -222,7 +223,8 @@ def health_check():
         'table': TABLE_NAME,
         'primary_key': PRIMARY_KEY,
         'fields': FIELDS,
-        'data_file': DATA_FILE
+        'data_file': DATA_FILE,
+        'port': PORT
     })
 
 @app.route('/', methods=['GET'])
@@ -230,6 +232,7 @@ def root():
     """Root endpoint with API info"""
     return jsonify({
         'message': f'{TABLE_NAME} API Server',
+        'port': PORT,
         'endpoints': {
             'GET': [
                 f'/api/{TABLE_NAME}',
@@ -253,26 +256,26 @@ if __name__ == '__main__':
     if not os.path.exists(DATA_FILE):
         save_data([])
     
-    print(f'========================================')
+    print('========================================')
     print(f'  {TABLE_NAME} API Server')
-    print(f'========================================')
-    print(f'Port: {port}')
+    print('========================================')
+    print(f'Port: {PORT}')
     print(f'Table: {TABLE_NAME}')
     print(f'Primary Key: {PRIMARY_KEY}')
     print(f'Data File: {DATA_FILE}')
-    print(f'========================================')
-    print(f'Available endpoints:')
+    print('========================================')
+    print('Available endpoints:')
     print(f'  GET    /api/{TABLE_NAME}         - Get all records')
     print(f'  GET    /api/{TABLE_NAME}/<id>    - Get single record')
     print(f'  POST   /api/{TABLE_NAME}         - Create new record')
     print(f'  PUT    /api/{TABLE_NAME}/<id>    - Update record')
     print(f'  DELETE /api/{TABLE_NAME}/<id>    - Delete record')
     print(f'  GET    /api/health                 - Health check')
-    print(f'========================================')
-    print(f'Server running at: http://localhost:${port}')
+    print('========================================')
+    print(f'Server running at: http://localhost:{PORT}')
     print(f'Open ${table.name}.html in your browser to use the UI')
-    print(f'========================================')
+    print('========================================')
     
-    app.run(host='0.0.0.0', port=${port}, debug=True)
+    app.run(host='0.0.0.0', port=PORT, debug=True)
 `;
 }
