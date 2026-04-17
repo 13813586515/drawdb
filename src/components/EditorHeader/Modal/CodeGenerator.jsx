@@ -1,12 +1,8 @@
 import { useState, useMemo } from "react";
 import {
   Tabs,
-  TabList,
-  TabPanel,
-  Tab,
+  TabPane,
   Button,
-  Radio,
-  RadioGroup,
   Checkbox,
   Tag,
   Select,
@@ -216,15 +212,12 @@ export default function CodeGenerator({
                 onChange={setActiveLayer}
                 type="line"
               >
-                <TabList>
-                  {availableLayers.map((layer) => (
-                    <Tab itemKey={layer} key={layer}>
-                      {layerLabels[layer] || layer}
-                    </Tab>
-                  ))}
-                </TabList>
                 {availableLayers.map((layer) => (
-                  <TabPanel itemKey={layer} key={layer}>
+                  <TabPane
+                    tab={layerLabels[layer] || layer}
+                    itemKey={layer}
+                    key={layer}
+                  >
                     <div className="h-[400px]">
                       <CodeEditor
                         value={currentCode}
@@ -234,7 +227,7 @@ export default function CodeGenerator({
                         showCopyButton={true}
                       />
                     </div>
-                  </TabPanel>
+                  </TabPane>
                 ))}
               </Tabs>
             </>
