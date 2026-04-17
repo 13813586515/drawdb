@@ -3,6 +3,7 @@ import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
 import SidePanel from "./EditorSidePanel/SidePanel";
+import ProgressIndicator from "./EditorHeader/Modal/ProgressIndicator";
 import { DB, State } from "../data/constants";
 import { db } from "../data/db";
 import {
@@ -589,6 +590,7 @@ export default function WorkSpace() {
       >
         {t("restore_warning")}
       </Modal>
+      <ProgressIndicator />
     </div>
   );
 }

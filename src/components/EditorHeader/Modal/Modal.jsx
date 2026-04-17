@@ -32,6 +32,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
+import PrototypeModal from "./PrototypeModal";
 import { useNavigate } from "react-router-dom";
 import { mergeCustomTypes } from "../../../utils/customTypes";
 
@@ -321,6 +322,8 @@ export default function Modal({
         );
       case MODAL.SHARE:
         return <Share title={title} setModal={setModal} />;
+      case MODAL.PROTOTYPE:
+        return <PrototypeModal onClose={() => setModal(MODAL.NONE)} />;
       default:
         return <></>;
     }
@@ -366,9 +369,9 @@ export default function Modal({
           ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
-        hidden: modal === MODAL.SHARE,
+        hidden: modal === MODAL.SHARE || modal === MODAL.PROTOTYPE,
       }}
-      hasCancel={modal !== MODAL.SHARE}
+      hasCancel={modal !== MODAL.SHARE && modal !== MODAL.PROTOTYPE}
       cancelText={t("cancel")}
       width={getModalWidth(modal)}
       bodyStyle={{
