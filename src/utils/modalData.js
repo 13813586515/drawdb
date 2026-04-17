@@ -25,6 +25,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("language");
     case MODAL.SHARE:
       return i18n.t("share");
+    case MODAL.PROTOTYPE:
+      return "原型验证";
     default:
       return "";
   }
@@ -37,6 +39,8 @@ export const getModalWidth = (modal) => {
     case MODAL.CODE:
     case MODAL.NEW:
       return 740;
+    case MODAL.PROTOTYPE:
+      return 800;
     default:
       return 600;
   }

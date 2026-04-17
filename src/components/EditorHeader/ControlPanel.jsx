@@ -1220,6 +1220,12 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         ],
         function: () => {},
       },
+      prototype_verification: {
+        name: "原型验证",
+        function: () => {
+          setModal(MODAL.PROTOTYPE);
+        },
+      },
       exit: {
         function: () => {
           save();

@@ -88,6 +88,14 @@ export const MODAL = {
   LANGUAGE: 10,
   SHARE: 11,
   CONFIG_CUSTOM_TYPES: 12,
+  PROTOTYPE: 13,
+};
+
+export const PROTOTYPE_STATUS = {
+  IDLE: 0,
+  GENERATING: 1,
+  COMPLETED: 2,
+  ERROR: 3,
 };
 
 export const STATUS = {
